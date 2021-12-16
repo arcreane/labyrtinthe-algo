@@ -1,14 +1,19 @@
 package fr.coding;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+
+// https://rosettacode.org/wiki/Maze_generation#Java
 
 public class Maze {
     private final int width;
     private final int height;
     private final int[][] maze;
 
-    public Maze(int width, int height) {
+    public Maze(int width, int height) throws IOException {
         this.width = width;
         this.height = height;
 
@@ -39,24 +44,43 @@ public class Maze {
         return (v >= 0) && (v < upper);
     }
 
-    public void display() {
+    public void display() throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("labyrinth.txt", false));
+
         for (int i = 0; i < height; i++) {
-            // draw the north edge
             for (int j = 0; j < width; j++) {
-                System.out.print((maze[j][i] & 1) == 0 ? "▄▄▄▄" : "█   ");
+                if (i == 0 && j == 0) {
+                    System.out.print("#   ");
+                } else {
+                    System.out.print((maze[j][i] & 1) == 0 ? "#---" : "#   ");
+                }
+
+                writer.write((maze[j][i] & 1) == 0 ? "#---" : "#   ");
             }
-            System.out.println("█");
-            // draw the west edge
+            writer.write("# \n");
+            System.out.println("#");
+
             for (int j = 0; j < width; j++) {
-                System.out.print((maze[j][i] & 8) == 0 ? "█   " : "    ");
+                writer.write((maze[j][i] & 8) == 0 ? "|   " : "    ");
+                System.out.print((maze[j][i] & 8) == 0 ? "|   " : "    ");
             }
-            System.out.println("█");
+
+            writer.write("|\n");
+            System.out.println("|");
         }
-        // draw the bottom line
+
+        for (int j = 0; j < width - 1; j++) {
+            System.out.print("#---");
+        }
+
         for (int j = 0; j < width; j++) {
-            System.out.print("▄▄▄▄");
+            writer.write("#---");
         }
-        System.out.println("█");
+
+        writer.write("#\n");
+        System.out.println("#   #");
+
+        writer.flush();
     }
 
     private enum DIR {

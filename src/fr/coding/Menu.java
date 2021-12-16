@@ -90,7 +90,7 @@ public class Menu {
 
             BufferedWriter writer = new BufferedWriter(new FileWriter("leaderboard.txt", true));
 
-            String log = "| Name: " + name + " | Time: " + time + " | Resolved: ";
+            String log = "| Name: " + name + " | Points : "+ (elapsedTime / 100) + " | Time: " + time + " | Resolved: ";
 
             if (resolved) {
                 log += "yes";

@@ -59,9 +59,9 @@ public class MazeSolver
             ok = true;
         }
 
-        if (ok)
-        {
+        if (ok) {
             maze[y][x] = '●';
+
             switch (d) {
                 case 0 -> maze[y - 1][x] = '●';
                 case 1 -> maze[y][x + 1] = '●';
