@@ -2,6 +2,7 @@ package fr.coding;
 
 import fr.coding.utils.Configuration;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -9,7 +10,7 @@ public class Menu {
     static Scanner scanner = new Scanner(System.in);
     static Configuration config = new Configuration(2);
 
-    public static void menu() {
+    public static void menu() throws InterruptedException, IOException {
         System.out.println();
         System.out.println("------------------");
         System.out.println("| Menu :         |");
@@ -44,13 +45,13 @@ public class Menu {
 
         boolean finish = false;
 
-        System.out.println("\nEnter 'finish' in the console if you find the exit.");
+        System.out.println("\nEnter 'finish' in the console if you find the exit or 'resolve' to show the good path.");
         System.out.print("-> ");
 
         do {
             if (scanner.next().toLowerCase(Locale.ROOT).equals("finish")) {
                 finish = true;
-            } else {
+            } else if (scanner.next().toLowerCase(Locale.ROOT).equals("resolve")) {
                 System.out.print("-> ");
             }
         } while (!finish);
@@ -60,13 +61,19 @@ public class Menu {
         long elapsedMinutes = elapsedSeconds / 60;
 
         System.out.println("\nYou have finish the labyrinth in " + elapsedMinutes % 60 + "m" + elapsedSeconds % 60 + "s");
+
+        endMaze();
+    }
+
+    public static void endMaze() {
+
     }
 
     public static void leaderboard() {
         System.out.println("Show leaderboard");
     }
 
-    public static void configuration() {
+    public static void configuration() throws InterruptedException, IOException {
         System.out.println("------------------");
         System.out.println("| Config :       |");
         System.out.println("| 1. Easy        |");
