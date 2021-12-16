@@ -122,9 +122,9 @@ public class Menu {
     }
 
     public static void leaderboard() throws IOException, InterruptedException {
-        String lb = Files.readString(Paths.get("leaderboard.txt"));
-
         if (new File("leaderboard.txt").length() != 0) {
+            String lb = Files.readString(Paths.get("leaderboard.txt"));
+
             System.out.println("------------------");
             System.out.println("| Leaderboard : ");
             System.out.println("| \n" + lb);
