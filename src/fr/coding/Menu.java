@@ -5,6 +5,8 @@ import fr.coding.utils.Configuration;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class Menu {
     static Scanner scanner = new Scanner(System.in);
@@ -61,8 +63,9 @@ public class Menu {
         long elapsedMinutes = elapsedSeconds / 60;
 
         System.out.println("\nYou have finish the labyrinth in " + elapsedMinutes % 60 + "m" + elapsedSeconds % 60 + "s");
-
         endMaze();
+
+
     }
 
     public static void endMaze() {
