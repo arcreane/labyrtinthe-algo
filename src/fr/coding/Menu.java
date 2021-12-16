@@ -80,7 +80,7 @@ public class Menu {
             if (resolved) {
                 System.out.println("\nYou have finish the labyrinth in " + time + "\n");
             } else {
-                System.out.println("\nYou gave up the labyrinth in " + time + "s\n");
+                System.out.println("\nYou gave up the labyrinth in " + time + "\n");
             }
 
             System.out.println("Enter your name: ");
@@ -98,7 +98,7 @@ public class Menu {
                 log += "no";
             }
 
-            writer.write(log);
+            writer.write("\n" + log);
             writer.flush();
         }
 
@@ -127,7 +127,7 @@ public class Menu {
 
             System.out.println("------------------");
             System.out.println("| Leaderboard : ");
-            System.out.println("| \n" + lb);
+            System.out.println("|" + lb);
             System.out.println("------------------");
         } else {
             System.out.println("Leaderboard is empty.");
