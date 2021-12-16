@@ -12,8 +12,11 @@ public class MazeSolver
                 new BufferedReader (new InputStreamReader (f, StandardCharsets.US_ASCII));
         ArrayList<String> lines = new ArrayList<>();
         String line;
-        while ((line = r.readLine()) != null)
-            lines.add (line);
+
+        while ((line = r.readLine()) != null) {
+            lines.add(line);
+        }
+
         return lines.toArray(new String[0]);
     }
 
@@ -58,12 +61,12 @@ public class MazeSolver
 
         if (ok)
         {
-            maze[y][x] = '*';
+            maze[y][x] = '●';
             switch (d) {
-                case 0 -> maze[y - 1][x] = '*';
-                case 1 -> maze[y][x + 1] = '*';
-                case 2 -> maze[y + 1][x] = '*';
-                case 3 -> maze[y][x - 1] = '*';
+                case 0 -> maze[y - 1][x] = '●';
+                case 1 -> maze[y][x + 1] = '●';
+                case 2 -> maze[y + 1][x] = '●';
+                case 3 -> maze[y][x - 1] = '●';
             }
         }
 
@@ -90,7 +93,7 @@ public class MazeSolver
                 else {
                     tmp[0] = tmp[1] = tmp[2] = maze[i][j];
 
-                    if (tmp[1] == '*') {
+                    if (tmp[1] == '●') {
                         tmp[0] = tmp[2] = ' ';
                     }
 

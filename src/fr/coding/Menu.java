@@ -2,9 +2,14 @@ package fr.coding;
 
 import fr.coding.utils.Configuration;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Scanner;
+
+import static fr.coding.MazeSolver.*;
+import static fr.coding.MazeSolver.expandHorizontally;
 
 public class Menu {
     static Scanner scanner = new Scanner(System.in);
@@ -40,37 +45,95 @@ public class Menu {
         startMaze();
     }
 
-    public static void startMaze() {
+    public static void startMaze() throws IOException, InterruptedException {
         long startTime = System.currentTimeMillis();
 
         boolean finish = false;
+        boolean resolved = false;
 
-        System.out.println("\nEnter 'finish' in the console if you find the exit or 'resolve' to show the good path.");
-        System.out.print("-> ");
+        System.out.println("\nEnter 'finish' in the console if you find the exit or 'abort' to show the good path.");
 
-        do {
-            if (scanner.next().toLowerCase(Locale.ROOT).equals("finish")) {
+        while (!finish) {
+            System.out.print("-> ");
+
+            String choose = scanner.next().toLowerCase(Locale.ROOT);
+
+            if (choose.equals("finish")) {
+                resolved = true;
                 finish = true;
-            } else if (scanner.next().toLowerCase(Locale.ROOT).equals("resolve")) {
-                System.out.print("-> ");
+            } else if (choose.equals("abort")) {
+                finish = true;
             }
-        } while (!finish);
+        }
 
-        long elapsedTime = System.currentTimeMillis() - startTime;
-        long elapsedSeconds = elapsedTime / 1000;
-        long elapsedMinutes = elapsedSeconds / 60;
-
-        System.out.println("\nYou have finish the labyrinth in " + elapsedMinutes % 60 + "m" + elapsedSeconds % 60 + "s");
-
-        endMaze();
+        endMaze(startTime, resolved);
     }
 
-    public static void endMaze() {
+    public static void endMaze(long startTime, boolean resolved) throws IOException, InterruptedException {
+        if (startTime != 0) {
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            long elapsedSeconds = elapsedTime / 1000;
+            long elapsedMinutes = elapsedSeconds / 60;
 
+            String time = elapsedMinutes % 60 + "m" + elapsedSeconds % 60 + "s";
+
+            if (resolved) {
+                System.out.println("\nYou have finish the labyrinth in " + time + "\n");
+            } else {
+                System.out.println("\nYou gave up the labyrinth in " + time + "s\n");
+            }
+
+            System.out.println("Enter your name: ");
+            System.out.print("-> ");
+
+            String name = scanner.next();
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter("leaderboard.txt", true));
+
+            String log = "| Name: " + name + " | Time: " + time + " | Resolved: ";
+
+            if (resolved) {
+                log += "yes";
+            } else {
+                log += "no";
+            }
+
+            writer.write(log);
+            writer.flush();
+        }
+
+        System.out.println("------------------");
+        System.out.println("| 1. Show Path   |");
+        System.out.println("| 2. Back 2 Menu |");
+        System.out.println("------------------");
+
+        int choose;
+
+        do
+        {
+            System.out.print("-> ");
+            choose = scanner.nextInt();
+        } while (choose < 1 || choose > 2);
+
+        switch (choose) {
+            case 1 -> path();
+            case 2 -> menu();
+        }
     }
 
-    public static void leaderboard() {
-        System.out.println("Show leaderboard");
+    public static void leaderboard() throws IOException, InterruptedException {
+        String lb = Files.readString(Paths.get("leaderboard.txt"));
+
+        if (new File("leaderboard.txt").length() != 0) {
+            System.out.println("------------------");
+            System.out.println("| Leaderboard : ");
+            System.out.println("| \n" + lb);
+            System.out.println("------------------");
+        } else {
+            System.out.println("Leaderboard is empty.");
+        }
+
+        menu();
     }
 
     public static void configuration() throws InterruptedException, IOException {
@@ -122,5 +185,24 @@ public class Menu {
         } while (size[1] < 10 || size[1] > 133);
 
         return size;
+    }
+
+    public static void path() throws IOException, InterruptedException {
+        InputStream f = new FileInputStream("labyrinth.txt");
+
+        String[] lines = readLines(f);
+
+        char[][] maze = decimateHorizontally (lines);
+        solveMaze (maze);
+
+        String[] solvedLines = expandHorizontally (maze);
+
+        for (String solvedLine : solvedLines) {
+            System.out.println(solvedLine);
+        }
+
+        System.out.println();
+
+        endMaze(0, false);
     }
 }
