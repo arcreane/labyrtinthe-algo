@@ -10,12 +10,11 @@ public class Configuration {
     private final int[] MEDIUM = { 25, 15 }; // On déclare la taille du labyrinthe pour la difficulté mediul.
     private final int[] HARD = { 35, 25 }; // On déclare la taille du labyrinthe pour la difficulté hard.
 
-
     public Configuration(int difficulty) {
         setDifficulty(difficulty);
     }
 
-// On crée une foonction setDifficulty qui va permettre de choisir la difficulté.
+    // On crée une foonction setDifficulty qui va permettre de choisir la difficulté.
     public void setDifficulty(int difficulty) {
         switch (difficulty) {
             case 1 -> this.size = EASY;

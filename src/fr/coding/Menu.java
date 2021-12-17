@@ -1,13 +1,11 @@
 package fr.coding;
 
 import fr.coding.utils.Configuration;
+import fr.coding.utils.Player;
 
-
+import javax.swing.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 import static fr.coding.MazeSolver.*;
 import static fr.coding.MazeSolver.expandHorizontally;
@@ -16,7 +14,7 @@ import static fr.coding.MazeSolver.expandHorizontally;
 public class Menu {
     static Scanner scanner = new Scanner(System.in);
     static Configuration config = new Configuration(2);
-
+    static Map<Long, Player> map = new HashMap<>();
 
     // On affiche les différentes option que l'ont peut choisir sur le menu.
     public static void menu() throws InterruptedException, IOException {
@@ -31,15 +29,15 @@ public class Menu {
 
         int choose; // Déclaration d'une variable Int "choose".
 
-        do {
+        do
+        {
             System.out.print("-> ");
             choose = scanner.nextInt();
-           }
-        while (choose < 1 || choose > 4);
+        } while (choose < 1 || choose > 4);
 
         System.out.println();
 
-// On déclare un switch pour créér les différentes option du menu.
+        // On déclare un switch pour créér les différentes option du menu.
         switch (choose) {
             case 1 -> new Maze(config.getSize()[0], config.getSize()[1]);
             case 2 -> configuration();
@@ -49,22 +47,23 @@ public class Menu {
 
         startMaze();
     }
-// On crée une fonction qui va permettre de lancer le labyrinthe.
+
+    // On crée une fonction qui va permettre de lancer le labyrinthe.
     public static void startMaze() throws IOException, InterruptedException {
-        long startTime = System.currentTimeMillis(); // Création d'une variable long "startTime".
+        long startTime = System.currentTimeMillis();  // Création d'une variable long "startTime".
 
         boolean finish = false; // Création d'une variable boolean "finish".
         boolean resolved = false; // Création d'une variable boolean "resolved".
 
         System.out.println("\nEnter 'finish' in the console if you find the exit or 'abort' to show the good path.");
 
-// Déclaration d'une boucle while.
+        // Déclaration d'une boucle while.
         while (!finish) {
             System.out.print("-> ");
 
             String choose = scanner.next().toLowerCase(Locale.ROOT);
 
-// Création d'une boucle if.
+            // Création d'une boucle if.
             if (choose.equals("finish")) {
                 resolved = true;
                 finish = true;
@@ -76,24 +75,28 @@ public class Menu {
         endMaze(startTime, resolved);
     }
 
-// On crée une fonction pour terminer le labyrinthe.
+    // On crée une fonction pour terminer le labyrinthe.
     public static void endMaze(long startTime, boolean resolved) throws IOException, InterruptedException {
         if (startTime != 0) {
-            long elapsedTime = System.currentTimeMillis() - startTime;   // Création d'une variable long "elapsedTime".
+            long elapsedTime = System.currentTimeMillis() - startTime; // Création d'une variable long "elapsedTime".
             long elapsedSeconds = elapsedTime / 1000; // Création d'une variable long "elapsedSeconds".
             long elapsedMinutes = elapsedSeconds / 60; // Création d'une variable long "elapsedMinutes".
 
             String time = elapsedMinutes % 60 + "m" + elapsedSeconds % 60 + "s";
 
-// Création d'une boucle if.
+            // Création d'une boucle if.
             if (resolved) { // Si le labyrinthe est résolue afiicher le message "You have finish the labyrinth in "time"".
                 System.out.println("\nYou have finish the labyrinth in " + time + "\n");
-
             } else { // Sinon afficher le message " You gave up the labyrinth in "time"".
                 System.out.println("\nYou gave up the labyrinth in " + time + "\n");
             }
 
-            System.out.println("Enter your name: ");  // Affichage d'un scanner.
+            final JFrame parent = new JFrame();
+            parent.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            parent.setVisible(true);
+            JOptionPane.showMessageDialog(parent, "You finished well done");
+
+            System.out.println("Enter your name: ");// Affichage d'un scanner.
             System.out.print("-> "); // Affichage d'un scanner.
 
             String name = scanner.next(); // Création d'une variable scanner en string.
@@ -102,17 +105,18 @@ public class Menu {
 
             String log = "| Name: " + name + " | Points : "+ (elapsedTime / 100) + " | Time: " + time + " | Resolved: ";
 
-// Création d'une boucle if pour savoir si le labyrinthe est résolue ou non.
+            // Création d'une boucle if pour savoir si le labyrinthe est résolue ou non.
             if (resolved) {
                 log += "yes";
             } else {
                 log += "no";
             }
 
+            map.put((elapsedTime / 100), new Player(name, elapsedTime / 100, time, resolved));
+
             writer.write("\n" + log);
             writer.flush();
         }
-
 // Affichage d'un nouveau menu.
         System.out.println("------------------");
         System.out.println("| 1. Show Path   |");
@@ -120,7 +124,6 @@ public class Menu {
         System.out.println("------------------");
 
         int choose; // Déclaration d'une variable int "choose".
-
 
         do
         {
@@ -134,15 +137,26 @@ public class Menu {
         }
     }
 
-
-// On crée une fonction "leaderboard" pour afficher les meilleurs joueurs.
+    // On crée une fonction "leaderboard" pour afficher les meilleurs joueurs.
     public static void leaderboard() throws IOException, InterruptedException {
-        if (new File("leaderboard.txt").length() != 0) {
-            String lb = Files.readString(Paths.get("leaderboard.txt"));
+        Map<Long, Player> treeMap = new TreeMap<>(map);
 
+        if (treeMap.size() != 0) {
             System.out.println("------------------");
-            System.out.println("| Leaderboard : ");
-            System.out.println("|" + lb);
+            System.out.println("| Leaderboard : \n|");
+
+
+            for (long key : treeMap.keySet()) {
+                String log = "| " + map.get(key).getName() + " | " + map.get(key).getPoints() + " | " + map.get(key).getTime() + " | ";
+                if (map.get(key).isResolved()) {
+                    log += "yes";
+                } else {
+                    log += "no";
+                }
+
+                System.out.println(log);
+            }
+
             System.out.println("------------------");
         } else {
             System.out.println("Leaderboard is empty.");
@@ -151,7 +165,7 @@ public class Menu {
         menu();
     }
 
-// Création d'une fonction "configuration".
+    // Création d'une fonction "configuration".
     public static void configuration() throws InterruptedException, IOException {
         System.out.println("------------------");
         System.out.println("| Config :       |");
@@ -162,6 +176,7 @@ public class Menu {
         System.out.println("| 5. Back        |"); // Permettre de choisir le niveau "Back".
         System.out.println("------------------");
 
+
         int choose; // Création d'une variable int "choose"
 
         do
@@ -169,7 +184,6 @@ public class Menu {
             System.out.print("-> ");
             choose = scanner.nextInt();
         } while (choose < 1 || choose > 5);
-
 
 // On déclare un switch de choose pour choisir la difficulté du labyrinthe que l'on veut.
         switch (choose) {
@@ -182,7 +196,8 @@ public class Menu {
 
         menu();
     }
-// Création d'une fontion "CustomSize" qui permet de choisir la taille du labyrinthe.
+
+    // Création d'une fontion "CustomSize" qui permet de choisir la taille du labyrinthe.
     public static int[] customSize() {
         System.out.println("\nEnter width :"); // Afficher la largeur voulu.
 
@@ -194,7 +209,7 @@ public class Menu {
             size[0] = scanner.nextInt();
         } while (size[0] < 10 || size[0] > 133);
 
-        System.out.println("\nEnter height :"); // Afficher la hauteur voulu.
+        System.out.println("\nEnter height :");  // Afficher la hauteur voulu.
 
         do
         {
@@ -205,7 +220,7 @@ public class Menu {
         return size;
     }
 
-// Création de la fonction path qui permet d'écrire la solution du labirynthe.
+    // Création de la fonction path qui permet d'écrire la solution du labirynthe.
     public static void path() throws IOException, InterruptedException {
         InputStream f = new FileInputStream("labyrinth.txt");
 
