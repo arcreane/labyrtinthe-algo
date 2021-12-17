@@ -143,18 +143,23 @@ public class Menu {
 
         if (treeMap.size() != 0) {
             System.out.println("------------------");
-            System.out.println("| Leaderboard : \n|");
-
+            System.out.println("| Winners Leaderboard : \n|");
 
             for (long key : treeMap.keySet()) {
-                String log = "| " + map.get(key).getName() + " | " + map.get(key).getPoints() + " | " + map.get(key).getTime() + " | ";
                 if (map.get(key).isResolved()) {
-                    log += "yes";
-                } else {
-                    log += "no";
-                }
+                    String log = "| " + map.get(key).getName() + " | " + map.get(key).getPoints() + " | " + map.get(key).getTime() + " | Resolved : yes";
 
-                System.out.println(log);
+                    System.out.println(log);
+                }
+            }
+            System.out.println("------------------");
+            System.out.println("| Losers Leaderboard : \n|");
+            for (long key : treeMap.keySet()) {
+                if (!map.get(key).isResolved()) {
+                    String log = "| " + map.get(key).getName() + " | " + map.get(key).getPoints() + " | " + map.get(key).getTime() + " | Resolved : no";
+
+                    System.out.println(log);
+                }
             }
 
             System.out.println("------------------");
